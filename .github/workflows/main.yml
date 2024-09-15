@@ -71,11 +71,14 @@ jobs:
         shell: pwsh
       
             # Copie du fichier sur le serveur via SSH
-      - name: Déployer sur le serveur
+      - name: Create SSH Key file
+        run: echo "${{ secrets.SSH_KEY }}" > path_to_private_key
+          
+      - name: SCP files to server
         run: |
-          pscp -i path_to_private_key out/make/x-server-${{ github.ref_name }}.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/hosting/sites/github/githubCopy/
+          scp -i path_to_private_key out/make/x-server-${{ github.ref_name }}.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/hosting/sites/github/githubCopy/
         shell: pwsh
-    
+          
       
       # Téléverser les artefacts vers la Release GitHub
       - name: Upload Release Asset
