@@ -3,7 +3,7 @@ name: Build and Package x-server
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*.*.*'  
 
 jobs:
   build:
@@ -30,7 +30,6 @@ jobs:
           NEW_VERSION="${GITHUB_REF#refs/tags/v}"
           npm version $NEW_VERSION --no-git-tag-version
         shell: bash
-
       # Installation des dépendances
       - name: Install dependencies
         run: npm install
@@ -38,17 +37,17 @@ jobs:
       - name: Install localtunnel dependencies
         working-directory: ./src/spd-localtunnel
         run: |
-          npm install
-
+          npm install 
+        
       - name: Install external modules dependencies
         working-directory: ./external_modules
         run: |
-          npm install
+          npm install 
 
       # Création du package de l'application
       - name: Package application
         run: npm run make
-
+      
       # Création d'une Release GitHub avec le tag Git
       - name: Create GitHub Release
         id: create_release
@@ -56,28 +55,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}
-          release_name: "Release ${{ github.ref_name }}"
+          tag_name: ${{ github.ref_name }}   
+          release_name: "Release ${{ github.ref_name }}"  
           draft: false
           prerelease: false
           body: |
             ### Changements :
             - Nouveaux changements dans la version.
 
+   
       # Zip le répertoire sous Ubuntu
       - name: Zip du package
         run: |
-          zip -r out/make/x-server-${{ github.ref_name }}.zip out/make/squirrel.windows
-
+        zip -r out/make/x-server-${{ github.ref_name }}.zip out/make/squirrel.windows
+    
+      # Copie du fichier sur le serveur via SSH
       - name: Déployer sur le serveur
-      uses: appleboy/scp-action@v0.1.1
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_KEY }}
-        source: "out/make/x-server-${{ github.ref_name }}.zip"
-        target: "/mnt/hosting/sites/github/githubCopy/"
-
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "out/make/x-server-${{ github.ref_name }}.zip"
+          target: "/mnt/hosting/sites/github/githubCopy/"
+    
+      
       # Téléverser les artefacts vers la Release GitHub
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -85,6 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: out/make/x-server-${{ github.ref_name }}.zip
-          asset_name: x-server-${{ github.ref_name }}.zip
+          asset_path: out/make/x-server-${{ github.ref_name }}.zip  
+          asset_name: x-server-${{ github.ref_name }}.zip  
           asset_content_type: application/zip
+
