@@ -67,7 +67,7 @@ jobs:
       # Zip le répertoire sous Ubuntu
       - name: Zip du package
         run: |
-        zip -r out/make/x-server-${{ github.ref_name }}.zip out/make/squirrel.windows
+          zip -r out/make/x-server-${{ github.ref_name }}.zip out/make/squirrel.windows
     
       # Copie du fichier sur le serveur via SSH
       - name: Déployer sur le serveur
