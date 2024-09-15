@@ -57,7 +57,7 @@ body {
 
 code {
   padding: 0 4px;
-  border-radius: 4px;
+  border-radius: 3px;
   background: #ccc;
   color: var(--primary);
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
