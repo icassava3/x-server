@@ -1,0 +1,36 @@
+html
+  head
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    title= title
+    link(rel="stylesheet", href="/styles/xserver-landing-page.css")
+    link(rel='icon' href='/icons/xserver.ico')
+  body
+    div.header-image-bg
+      h3 x-server
+
+    //- h6 Vous êtes bien connecté au serveur local Spider de
+
+    div(class='content')
+      h1= `${codeEtab} - ${libelleEtab}`  
+
+    div.ip
+
+    div.ip
+      p.text Vous pouvez lancer spider dans le navigateur depuis...
+
+    div.ip
+      p.text le réseau / wifi local
+      //- a(class='link' href=localAddress target='blank_')= localAddress
+      a(class='link' href=localAddress)= localAddress
+    | 
+
+if remoteAddress
+    div.ip
+      p.text ...ou internet.
+      a(class='link' href=remoteAddress)= remoteAddress
+
+    footer.footer
+      p &copy; 2023 | SPIDER TECHNOLOGIES

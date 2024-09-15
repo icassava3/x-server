@@ -1,0 +1,110 @@
+@font-face {
+    font-family: "Gruppo";
+    src: url(../fonts/Gruppo-Regular.ttf);
+}
+
+body {
+    font: 18px/23px "Cantarell", sans-serif;
+    color: #ffffff;
+    margin: 0px;
+    padding: 0px;
+    font-family: Gruppo;
+}
+
+.header-image-bg {
+    background-image: url(../images/spider-gf7b0240f5_1920.jpg);
+    /* background-image: url(../images/grid-g48215dd99_1920.jpg); */
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    height: 40vh;
+}
+
+.header-image-bg h3 {
+    /* color: rgb(255, 255, 255); */
+    margin: 0px;
+    padding: 20px 50px;
+    font-size: 30px;
+    font-family: Gruppo;
+}
+
+
+.header {
+    color: rgb(225, 227, 229);
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    text-align: center;
+    background: rgba(76, 175, 80, 0.2)
+}
+
+.content h1 {
+    color: #0A175B;
+    font-family: Gruppo;
+    font-weight: bold;
+}
+
+h1 {
+    color: #efecec;
+    /* text-transform: uppercase; */
+    /* font-size: 35px; */
+    line-height: 30px;
+    font-weight: 400;
+    text-align: center;
+}
+
+h6 {
+    text-align: center;
+    color: #3DABE4;
+    font-size: 22px;
+    font-weight: 400;
+    font-family: Gruppo;
+    padding: 0px;
+
+}
+
+footer {
+    height: 40px;
+    background-color: #0F0F0F;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    color: #fff;
+    font-size: 12px;
+    position: fixed;
+    bottom: 0px;
+    right: 20px;
+}
+
+.ip {
+    margin-top: 30px;
+    color: #C3C3C3;
+    font-size: 25px;
+    line-height: 10px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.link {
+    text-align: center;
+    color: #0000FF;
+    font-size: 22px;
+    font-weight: 400;
+    font-family: Gruppo;
+}
+
+.text {
+    text-align: center;
+    color: #2D2D2D;
+    font-size: 18;
+    font-weight: bold;;
+    font-family: Gruppo;
+}

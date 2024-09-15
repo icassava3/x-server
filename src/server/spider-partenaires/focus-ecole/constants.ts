@@ -1,0 +1,5 @@
+export const FOCUS_ECOLE_SERV_ID = "SERV_FOCUS_ECOLE"
+// export const FOCUS_ECOLE_SERVER_BASE_URL = "http://ryoda:1972"
+// export const FOCUS_ECOLE_SERVER_BASE_URL = "http://192.168.0.102:1972"
+// export const FOCUS_ECOLE_SERVER_BASE_URL = "http://127.0.0.1:1972"
+export const FOCUS_ECOLE_SERVER_BASE_URL = "https://focusecole.spider-api.com/v1"
