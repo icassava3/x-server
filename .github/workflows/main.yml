@@ -30,25 +30,21 @@ jobs:
           NEW_VERSION="${GITHUB_REF#refs/tags/v}"
           npm version $NEW_VERSION --no-git-tag-version
         shell: bash
-      # Installation des dépendances
+
       - name: Install dependencies
         run: npm install
 
       - name: Install localtunnel dependencies
         working-directory: ./src/spd-localtunnel
-        run: |
-          npm install 
-        
+        run: npm install 
+
       - name: Install external modules dependencies
         working-directory: ./external_modules
-        run: |
-          npm install 
+        run: npm install 
 
-      # Création du package de l'application
       - name: Package application
         run: npm run make
       
-      # Création d'une Release GitHub avec le tag Git
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -63,43 +59,37 @@ jobs:
             ### Changements :
             - Nouveaux changements dans la version.
 
-   
-      # Zip le répertoire squirrel.windows sous Windows
-      - name: Zip du make windows
-        run: |
-          Compress-Archive -Path out/make/squirrel.windows -DestinationPath out/make/x-server-${{ github.ref_name }}.zip
-        shell: pwsh
-      
       - name: Create SSH Key file
         run: |
           echo "${{ secrets.SSH_KEY }}" > path_to_private_key
           chmod 600 path_to_private_key
         shell: bash
       
-      - name: Déployer sur le serveur
+      - name: Copier les fichiers générés vers le serveur
         run: |
-          scp -v -o StrictHostKeyChecking=no -i path_to_private_key out/make/x-server-${{ github.ref_name }}.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/hosting/sites/github/githubCopy/
+          VERSION=$(node -p "require('./package.json').version")
+          scp -v -o StrictHostKeyChecking=no -i path_to_private_key \
+            "out/make/squirrel.windows/x64/x-server-${VERSION}-full.nupkg" \
+            "out/make/squirrel.windows/x64/RELEASES" \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/hosting/sites/github/githubCopy/
         shell: bash
-      
-      
-      # # Copie du fichier sur le serveur via SSH
-      # - name: Déployer sur le serveur
-      #   uses: appleboy/scp-action@v0.1.1
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USER }}
-      #     key: ${{ secrets.SSH_KEY }}
-      #     source: "out/make/x-server-${{ github.ref_name }}.zip"
-      #     target: "/mnt/hosting/sites/github/githubCopy/"
-    
-      
-      # Téléverser les artefacts vers la Release GitHub
-      - name: Upload Release Asset
+
+      - name: Upload Release Asset x-server Setup.exe
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: out/make/x-server-${{ github.ref_name }}.zip  
-          asset_name: x-server-${{ github.ref_name }}.zip  
-          asset_content_type: application/zip
+          asset_path: out/make/squirrel.windows/x64/x-server-${{ github.ref_name }} Setup.exe
+          asset_name: x-server-${{ github.ref_name }} Setup.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Asset - RELEASES
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: out/make/squirrel.windows/x64/RELEASES
+          asset_name: RELEASES
+          asset_content_type: text/plain
