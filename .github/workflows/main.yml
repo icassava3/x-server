@@ -69,6 +69,7 @@ jobs:
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         run: |
           gh release create "v${{ env.NEW_VERSION }}" \
             --title "Release v${{ env.NEW_VERSION }}" \
@@ -78,6 +79,7 @@ jobs:
       - name: Upload assets to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         run: |
           gh release upload "v${{ env.NEW_VERSION }}" \
             "out/make/squirrel.windows/x64/x-server-${{ env.NEW_VERSION }} Setup.exe" \
