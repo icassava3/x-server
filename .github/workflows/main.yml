@@ -46,20 +46,6 @@ jobs:
       - name: Package application
         run: npm run make
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: "Release ${{ github.ref_name }}"
-          draft: false
-          prerelease: false
-          body: |
-            ### Changements :
-            - Nouveaux changements dans la version.
-
       - name: Create SSH Key file
         run: |
           echo "${{ secrets.SSH_KEY }}" > path_to_private_key
@@ -78,24 +64,25 @@ jobs:
             "out/make/squirrel.windows/x64/RELEASES" \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/hosting/sites/github/githubCopy/
         shell: bash
-      
 
-      - name: Upload Release Asset x-server Setup.exe
-        uses: actions/upload-release-asset@v1
+      - name: Authenticate GitHub CLI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: out/make/squirrel.windows/x64/x-server-${{env.NEW_VERSION}} Setup.exe
-          asset_name: x-server-${{env.NEW_VERSION }} Setup.exe
-          asset_content_type: application/octet-stream
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
-      - name: Upload Release Asset - RELEASES
-        uses: actions/upload-release-asset@v1
+      - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: out/make/squirrel.windows/x64/RELEASES
-          asset_name: RELEASES
-          asset_content_type: text/plain
+        run: |
+          gh release create "v${{ env.NEW_VERSION }}" \
+            --title "Release v${{ env.NEW_VERSION }}" \
+            --notes "### Changements :\n- Nouveaux changements dans la version." \
+            --target "${{ github.ref }}"
+
+      - name: Upload assets to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "v${{ env.NEW_VERSION }}" \
+            "out/make/squirrel.windows/x64/x-server-${{ env.NEW_VERSION }} Setup.exe" \
+            "out/make/x-server-v${{ env.NEW_VERSION }}.zip"
