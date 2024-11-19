@@ -73,7 +73,7 @@ jobs:
         run: |
           gh release create "v${{ env.NEW_VERSION }}" \
             --title "Release v${{ env.NEW_VERSION }}" \
-            --notes "### Changements :\n- Nouveaux changements dans la version." \
+            --notes "### Changements :- Nouveaux changements dans la version." 
 
       - name: Upload assets to release
         env:
@@ -81,5 +81,4 @@ jobs:
         shell: bash
         run: |
           gh release upload "v${{ env.NEW_VERSION }}" \
-            "out/make/squirrel.windows/x64/x-server-${{ env.NEW_VERSION }} Setup.exe" \
-            "out/make/x-server-v${{ env.NEW_VERSION }}.zip"
+            "out/make/squirrel.windows/x64/x-server-${{ env.NEW_VERSION }} Setup.exe" 
