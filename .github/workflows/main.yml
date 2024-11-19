@@ -3,7 +3,7 @@ name: Build and Package x-server
 on:
   push:
     tags:
-      - 'v*.*.*'  
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -29,6 +29,7 @@ jobs:
         run: |
           NEW_VERSION="${GITHUB_REF#refs/tags/v}"
           npm version $NEW_VERSION --no-git-tag-version
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
         shell: bash
 
       - name: Install dependencies
@@ -36,23 +37,23 @@ jobs:
 
       - name: Install localtunnel dependencies
         working-directory: ./src/spd-localtunnel
-        run: npm install 
+        run: npm install
 
       - name: Install external modules dependencies
         working-directory: ./external_modules
-        run: npm install 
+        run: npm install
 
       - name: Package application
         run: npm run make
-      
+
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}   
-          release_name: "Release ${{ github.ref_name }}"  
+          tag_name: ${{ github.ref_name }}
+          release_name: "Release ${{ github.ref_name }}"
           draft: false
           prerelease: false
           body: |
@@ -64,15 +65,20 @@ jobs:
           echo "${{ secrets.SSH_KEY }}" > path_to_private_key
           chmod 600 path_to_private_key
         shell: bash
-      
+
       - name: Copier les fichiers générés vers le serveur
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          ssh -o StrictHostKeyChecking=no -i path_to_private_key ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
+            if [ -f /mnt/hosting/sites/github/githubCopy/RELEASES ]; then
+              mv /mnt/hosting/sites/github/githubCopy/RELEASES /mnt/hosting/sites/github/githubCopy/RELEASES.bak
+            fi
+          "
           scp -v -o StrictHostKeyChecking=no -i path_to_private_key \
-            "out/make/squirrel.windows/x64/x-server-${VERSION}-full.nupkg" \
+            "out/make/squirrel.windows/x64/x-server-${{ env.NEW_VERSION }}-full.nupkg" \
             "out/make/squirrel.windows/x64/RELEASES" \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/hosting/sites/github/githubCopy/
         shell: bash
+      
 
       - name: Upload Release Asset x-server Setup.exe
         uses: actions/upload-release-asset@v1
@@ -80,8 +86,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: out/make/squirrel.windows/x64/x-server-${{ github.ref_name }} Setup.exe
-          asset_name: x-server-${{ github.ref_name }} Setup.exe
+          asset_path: out/make/squirrel.windows/x64/x-server-${{env.NEW_VERSION}} Setup.exe
+          asset_name: x-server-${{env.NEW_VERSION }} Setup.exe
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset - RELEASES
