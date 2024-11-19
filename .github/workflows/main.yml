@@ -74,7 +74,6 @@ jobs:
           gh release create "v${{ env.NEW_VERSION }}" \
             --title "Release v${{ env.NEW_VERSION }}" \
             --notes "### Changements :\n- Nouveaux changements dans la version." \
-            --target "${{ github.ref }}"
 
       - name: Upload assets to release
         env:
